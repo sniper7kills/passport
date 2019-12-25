@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class TokenRepository
 {
@@ -32,23 +33,38 @@ class TokenRepository
      * Get a token by the given user ID and token ID.
      *
      * @param  string  $id
-     * @param  int  $userId
+     * @param  int  $user
      * @return \Laravel\Passport\Token|null
      */
-    public function findForUser($id, $userId)
+    public function findForUser($id, $user)
     {
-        return Passport::token()->where('id', $id)->where('user_id', $userId)->first();
+        return Passport::token()->where('id', $id)
+            ->whereHasMorph(
+                'user',
+                get_class($user),
+                function (Builder $query) use ($user) {
+                    $query->where($user->getKeyName(), $user->getKey());
+                }
+            )->first();
     }
 
     /**
      * Get the token instances for the given user ID.
      *
-     * @param  mixed  $userId
+     * @param  mixed  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function forUser($userId)
+    public function forUser($user)
     {
-        return Passport::token()->where('user_id', $userId)->get();
+        return Passport::token()
+            ->whereHasMorph(
+                'user',
+                get_class($user),
+                function (Builder $query) use ($user) {
+                    $query->where($user->getKeyName(), $user->getKey());
+                }
+            )
+            ->get();
     }
 
     /**
@@ -61,7 +77,13 @@ class TokenRepository
     public function getValidToken($user, $client)
     {
         return $client->tokens()
-                    ->whereUserId($user->getAuthIdentifier())
+                    ->whereHasMorph(
+                        'user',
+                        get_class($user),
+                        function (Builder $query) use ($user) {
+                            $query->where($user->getKeyName(), $user->getKey());
+                        }
+                    )
                     ->where('revoked', 0)
                     ->where('expires_at', '>', Carbon::now())
                     ->first();
@@ -114,10 +136,16 @@ class TokenRepository
     public function findValidToken($user, $client)
     {
         return $client->tokens()
-                      ->whereUserId($user->getAuthIdentifier())
-                      ->where('revoked', 0)
-                      ->where('expires_at', '>', Carbon::now())
-                      ->latest('expires_at')
-                      ->first();
+            ->whereHasMorph(
+                'user',
+                get_class($user),
+                function (Builder $query) use ($user) {
+                    $query->where($user->getKeyName(), $user->getKey());
+                }
+            )
+            ->where('revoked', 0)
+            ->where('expires_at', '>', Carbon::now())
+            ->latest('expires_at')
+            ->first();
     }
 }

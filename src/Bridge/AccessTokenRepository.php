@@ -4,6 +4,7 @@ namespace Laravel\Passport\Bridge;
 
 use DateTime;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Events\AccessTokenCreated;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -54,16 +55,18 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
+        $provider = Auth::createUserProvider(config('auth.guards.api.provider'));
+        $user = $provider->retrieveById($accessTokenEntity->getUserIdentifier());
+
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
-            'user_id' => $accessTokenEntity->getUserIdentifier(),
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
-        ]);
+        ])->user()->associate($user)->save();
 
         $this->events->dispatch(new AccessTokenCreated(
             $accessTokenEntity->getIdentifier(),
