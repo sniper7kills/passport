@@ -19,6 +19,7 @@ class ClientCommand extends Command
             {--client : Create a client credentials grant client}
             {--name= : The name of the client}
             {--redirect_uri= : The URI to redirect to after authorization }
+            {--user_type= : The class of user the client should be assigned to }
             {--user_id= : The user ID the client should be assigned to }';
 
     /**
@@ -121,6 +122,11 @@ class ClientCommand extends Command
      */
     protected function createAuthCodeClient(ClientRepository $clients)
     {
+        $userType = $this->option('user_type') ?: $this->ask(
+            'What type user should the client be assigned to?',
+            'App\User'
+        );
+
         $userId = $this->option('user_id') ?: $this->ask(
             'Which user ID should the client be assigned to?'
         );
@@ -135,7 +141,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId, $name, $redirect
+            (new $userType)->findOrFail($userId), $name, $redirect
         );
 
         $this->info('New client created successfully.');
