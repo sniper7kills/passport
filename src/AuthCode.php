@@ -68,4 +68,14 @@ class AuthCode extends Model
     {
         return $this->belongsTo(Passport::clientModel());
     }
+
+    /**
+     * Get the user that the client belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function user()
+    {
+        return $this->morphTo('user');
+    }
 }

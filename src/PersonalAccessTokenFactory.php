@@ -60,22 +60,21 @@ class PersonalAccessTokenFactory
     /**
      * Create a new personal access token.
      *
-     * @param  mixed  $userId
+     * @param  mixed  $user
      * @param  string  $name
      * @param  array  $scopes
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = [])
+    public function make($user, $name, array $scopes = [])
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($this->clients->personalAccessClient(), $userId, $scopes)
+            $this->createRequest($this->clients->personalAccessClient(), $user, $scopes)
         );
 
-        $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
+        $token = tap($this->findAccessToken($response), function ($token) use ($user, $name) {
             $this->tokens->save($token->forceFill([
-                'user_id' => $userId,
                 'name' => $name,
-            ]));
+            ])->user()->associate($user));
         });
 
         return new PersonalAccessTokenResult(
@@ -87,17 +86,17 @@ class PersonalAccessTokenFactory
      * Create a request instance for the given client.
      *
      * @param  \Laravel\Passport\Client  $client
-     * @param  mixed  $userId
+     * @param  mixed  $user
      * @param  array  $scopes
      * @return \Zend\Diactoros\ServerRequest
      */
-    protected function createRequest($client, $userId, array $scopes)
+    protected function createRequest($client, $user, array $scopes)
     {
         return (new ServerRequest)->withParsedBody([
             'grant_type' => 'personal_access',
             'client_id' => $client->id,
             'client_secret' => $client->secret,
-            'user_id' => $userId,
+            'user_id' => $user->getAuthIdentifier(),
             'scope' => implode(' ', $scopes),
         ]);
     }
