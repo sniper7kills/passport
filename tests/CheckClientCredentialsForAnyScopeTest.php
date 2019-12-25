@@ -85,7 +85,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
 
     public function test_exception_is_thrown_when_oauth_throws_exception()
     {
-        $this->getExpectedException(\Illuminate\Auth\AuthenticationException::class);
+        $this->expectException(\Illuminate\Auth\AuthenticationException::class);
         $tokenRepository = m::mock(TokenRepository::class);
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
@@ -104,7 +104,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
 
     public function test_exception_is_thrown_if_token_does_not_have_required_scope()
     {
-        $this->getExpectedException(\Laravel\Passport\Exceptions\MissingScopeException::class);
+        $this->expectException(\Laravel\Passport\Exceptions\MissingScopeException::class);
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);

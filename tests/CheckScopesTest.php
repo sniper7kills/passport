@@ -31,7 +31,7 @@ class CheckScopesTest extends TestCase
 
     public function test_exception_is_thrown_if_token_doesnt_have_scope()
     {
-        $this->getExpectedException(\Laravel\Passport\Exceptions\MissingScopeException::class);
+        $this->expectException(\Laravel\Passport\Exceptions\MissingScopeException::class);
         $middleware = new CheckScopes;
         $request = m::mock();
         $request->shouldReceive('user')->andReturn($user = m::mock());
@@ -45,7 +45,7 @@ class CheckScopesTest extends TestCase
 
     public function test_exception_is_thrown_if_no_authenticated_user()
     {
-        $this->getExpectedException(\Illuminate\Auth\AuthenticationException::class);
+        $this->expectException(\Illuminate\Auth\AuthenticationException::class);
         $middleware = new CheckScopes;
         $request = m::mock();
         $request->shouldReceive('user')->once()->andReturn(null);
@@ -57,7 +57,7 @@ class CheckScopesTest extends TestCase
 
     public function test_exception_is_thrown_if_no_token()
     {
-        $this->getExpectedException(\Illuminate\Auth\AuthenticationException::class);
+        $this->expectException(\Illuminate\Auth\AuthenticationException::class);
         $middleware = new CheckScopes;
         $request = m::mock();
         $request->shouldReceive('user')->andReturn($user = m::mock());
