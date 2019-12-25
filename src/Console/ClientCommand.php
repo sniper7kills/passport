@@ -61,7 +61,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
+            null, null, $name, 'http://localhost'
         );
 
         $this->info('Personal access client created successfully.');
@@ -83,7 +83,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost'
+            null, null, $name, 'http://localhost'
         );
 
         $this->info('Password grant client created successfully.');
@@ -105,7 +105,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            null, $name, ''
+            null, null, $name, ''
         );
 
         $this->info('New client created successfully.');
@@ -121,6 +121,11 @@ class ClientCommand extends Command
      */
     protected function createAuthCodeClient(ClientRepository $clients)
     {
+        $userType = $this->option('user_type') ?: $this->ask(
+            'Which type of user should the client be assigned to?',
+            'App\User'
+        );
+
         $userId = $this->option('user_id') ?: $this->ask(
             'Which user ID should the client be assigned to?'
         );
@@ -135,7 +140,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId, $name, $redirect
+            $userType, $userId, $name, $redirect
         );
 
         $this->info('New client created successfully.');

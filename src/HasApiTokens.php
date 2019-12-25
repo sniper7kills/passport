@@ -20,7 +20,8 @@ trait HasApiTokens
      */
     public function clients()
     {
-        return $this->hasMany(Passport::clientModel(), 'user_id');
+        return $this->morphMany(Passport::clientModel(), 'user');
+        //return $this->hasMany(Passport::clientModel(), 'user_id');
     }
 
     /**
@@ -30,7 +31,8 @@ trait HasApiTokens
      */
     public function tokens()
     {
-        return $this->hasMany(Passport::tokenModel(), 'user_id')->orderBy('created_at', 'desc');
+        return $this->morphMany(Passport::tokenModel(), 'user');
+        //return $this->hasMany(Passport::tokenModel(), 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**
@@ -64,7 +66,7 @@ trait HasApiTokens
     public function createToken($name, array $scopes = [])
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-            $this->getKey(), $name, $scopes
+            get_class($this), $this->getKey(), $name, $scopes
         );
     }
 

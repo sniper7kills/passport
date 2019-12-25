@@ -57,9 +57,10 @@ class ClientController
      */
     public function forUser(Request $request)
     {
-        $userId = $request->user()->getAuthIdentifier();
+        $userType = get_class($request->user());
+        $userId = $request->user()->getKey();
 
-        return $this->clients->activeForUser($userId)->makeVisible('secret');
+        return $this->clients->activeForUser($userType, $userId)->makeVisible('secret');
     }
 
     /**
@@ -76,8 +77,11 @@ class ClientController
             'confidential' => 'boolean',
         ])->validate();
 
+        $userType = get_class($request->user());
+        $userId = $request->user()->getKey();
+
         return $this->clients->create(
-            $request->user()->getAuthIdentifier(), $request->name, $request->redirect,
+            $userType, $userId, $request->name, $request->redirect,
             false, false, (bool) $request->input('confidential', true)
         )->makeVisible('secret');
     }
@@ -91,7 +95,10 @@ class ClientController
      */
     public function update(Request $request, $clientId)
     {
-        $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
+        $userType = get_class($request->user());
+        $userId = $request->user()->getKey();
+
+        $client = $this->clients->findForUser($clientId, $userType, $userId);
 
         if (! $client) {
             return new Response('', 404);
@@ -116,7 +123,10 @@ class ClientController
      */
     public function destroy(Request $request, $clientId)
     {
-        $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
+        $userType = get_class($request->user());
+        $userId = $request->user()->getKey();
+
+        $client = $this->clients->findForUser($clientId, $userType, $userId);
 
         if (! $client) {
             return new Response('', 404);
