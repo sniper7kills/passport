@@ -57,11 +57,9 @@ class AuthorizationController
                               ClientRepository $clients,
                               TokenRepository $tokens)
     {
-
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
         });
-
 
         $scopes = $this->parseScopes($authRequest);
 
