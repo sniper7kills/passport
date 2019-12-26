@@ -73,8 +73,10 @@ class PersonalAccessTokenFactory
 
         $token = tap($this->findAccessToken($response), function ($token) use ($user, $name) {
             $this->tokens->save($token->forceFill([
+                'user_type' => get_class($user),
+                'user_id' => $user->getKey(),
                 'name' => $name,
-            ])->user()->associate($user));
+            ]));
         });
 
         return new PersonalAccessTokenResult(

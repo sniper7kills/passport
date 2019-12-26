@@ -126,12 +126,14 @@ class ClientRepository
     {
         $client = Passport::client()->forceFill([
             'name' => $name,
+            'user_type' => get_class($user),
+            'user_id' => $user->getKey(),
             'secret' => ($confidential || $personalAccess) ? Str::random(40) : null,
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
             'password_client' => $password,
             'revoked' => false,
-        ])->user()->associate($user);
+        ]);
 
         $client->save();
 
