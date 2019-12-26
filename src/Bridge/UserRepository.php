@@ -33,7 +33,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
     {
-        $provider = Auth::createUserProvider(config('auth.guards.api.provider'));
+        $provider = Auth::guard()->getProvider();
 
         if (!method_exists($provider, 'findForPassport')) {
             if (method_exists($provider->getModel(), 'findForPassport')) {
