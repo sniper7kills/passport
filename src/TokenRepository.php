@@ -39,13 +39,9 @@ class TokenRepository
     public function findForUser($id, $user)
     {
         return Passport::token()->where('id', $id)
-            ->whereHasMorph(
-                'user',
-                $user->getMorphClass(),
-                function (Builder $query) use ($user) {
-                    $query->where($user->getKeyName(), $user->getKey());
-                }
-            )->first();
+            ->where('user_type',$user->getMorphClass())
+            ->where('user_id',$user->getKey())
+            ->first();
     }
 
     /**
@@ -57,13 +53,8 @@ class TokenRepository
     public function forUser($user)
     {
         return Passport::token()
-            ->whereHasMorph(
-                'user',
-                $user->getMorphClass(),
-                function (Builder $query) use ($user) {
-                    $query->where($user->getKeyName(), $user->getKey());
-                }
-            )
+            ->where('user_type',$user->getMorphClass())
+            ->where('user_id',$user->getKey())
             ->get();
     }
 
@@ -77,13 +68,8 @@ class TokenRepository
     public function getValidToken($user, $client)
     {
         return $client->tokens()
-                    ->whereHasMorph(
-                        'user',
-                        $user->getMorphClass(),
-                        function (Builder $query) use ($user) {
-                            $query->where($user->getKeyName(), $user->getKey());
-                        }
-                    )
+                    ->where('user_type',$user->getMorphClass())
+                    ->where('user_id',$user->getKey())
                     ->where('revoked', 0)
                     ->where('expires_at', '>', Carbon::now())
                     ->first();
@@ -136,13 +122,8 @@ class TokenRepository
     public function findValidToken($user, $client)
     {
         return $client->tokens()
-            ->whereHasMorph(
-                'user',
-                $user->getMorphClass(),
-                function (Builder $query) use ($user) {
-                    $query->where($user->getKeyName(), $user->getKey());
-                }
-            )
+            ->where('user_type',$user->getMorphClass())
+            ->where('user_id',$user->getKey())
             ->where('revoked', 0)
             ->where('expires_at', '>', Carbon::now())
             ->latest('expires_at')
