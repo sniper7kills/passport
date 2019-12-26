@@ -41,7 +41,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
             ->andReturn($foundToken = new PersonalAccessTokenFactoryTestModelStub);
         $tokens->shouldReceive('save')->with($foundToken);
 
-        $result = $factory->make(1, 'token', ['scopes']);
+        $result = $factory->make(new PersonalAccessTokenFactoryTestFakeUser(), 'token', ['scopes']);
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
     }
@@ -59,4 +59,14 @@ class PersonalAccessTokenFactoryTestModelStub extends Token
     public $id = 1;
 
     public $secret = 'something';
+}
+
+class PersonalAccessTokenFactoryTestFakeUser extends \Illuminate\Foundation\Auth\User
+{
+    public $id = 1;
+
+    public function getAuthIdentifier()
+    {
+        return $this->id;
+    }
 }
