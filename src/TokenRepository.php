@@ -3,7 +3,6 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 
 class TokenRepository
 {
