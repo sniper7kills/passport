@@ -38,7 +38,7 @@ class ClientRepository
      * Get a client instance for the given ID and user ID.
      *
      * @param  int  $clientId
-     * @param  mixed  $user
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @return \Laravel\Passport\Client|null
      */
     public function findForUser($clientId, $user)
@@ -60,7 +60,7 @@ class ClientRepository
     /**
      * Get the client instances for the given user ID.
      *
-     * @param  mixed  $user
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function forUser($user)
@@ -79,7 +79,7 @@ class ClientRepository
     /**
      * Get the active client instances for the given user ID.
      *
-     * @param  mixed  $user
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function activeForUser($user)
@@ -114,7 +114,7 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param  int  $user
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @param  string  $name
      * @param  string  $redirect
      * @param  bool  $personalAccess
@@ -141,7 +141,7 @@ class ClientRepository
     /**
      * Store a new personal access token client.
      *
-     * @param  mixed  $user
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @param  string  $name
      * @param  string  $redirect
      * @return \Laravel\Passport\Client
@@ -158,7 +158,7 @@ class ClientRepository
     /**
      * Store a new password grant client.
      *
-     * @param  mixed  $user
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @param  string  $name
      * @param  string  $redirect
      * @return \Laravel\Passport\Client
