@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use RuntimeException;
 
