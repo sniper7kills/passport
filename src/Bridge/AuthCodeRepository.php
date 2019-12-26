@@ -29,7 +29,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
         $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
-            'user_type' => get_class($user),
+            'user_type' => $user->getMorphClass(),
             'user_id' => $user->getKey(),
             'scopes' => $this->formatScopesForStorage($authCodeEntity->getScopes()),
             'revoked' => false,
