@@ -47,13 +47,8 @@ class ClientRepository
 
         return $client
             ->where($client->getKeyName(), $clientId)
-            ->whereHasMorph(
-                'user',
-                $user->getMorphClass(),
-                function (Builder $query) use ($user) {
-                    $query->where($user->getKeyName(), $user->getKey());
-                }
-            )
+            ->where('user_type',$user->getMorphClass())
+            ->where('user_id',$user->getKey())
             ->first();
     }
 
@@ -66,13 +61,8 @@ class ClientRepository
     public function forUser($user)
     {
         return Passport::client()
-            ->whereHasMorph(
-                'user',
-                $user->getMorphClass(),
-                function (Builder $query) use ($user) {
-                    $query->where($user->getKeyName(), $user->getKey());
-                }
-            )
+            ->where('user_type',$user->getMorphClass())
+            ->where('user_id',$user->getKey())
             ->orderBy('name', 'asc')->get();
     }
 
