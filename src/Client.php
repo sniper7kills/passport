@@ -56,9 +56,6 @@ class Client extends Model
     public function user()
     {
         return $this->morphTo('user');
-        //return $this->belongsTo(
-        //    config('auth.providers.'.config('auth.guards.api.provider').'.model')
-        //);
     }
 
     /**
