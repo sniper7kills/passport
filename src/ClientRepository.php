@@ -49,7 +49,7 @@ class ClientRepository
             ->where($client->getKeyName(), $clientId)
             ->whereHasMorph(
                 'user',
-                get_class($user),
+                $user->getMorphClass(),
                 function (Builder $query) use ($user) {
                     $query->where($user->getKeyName(), $user->getKey());
                 }
@@ -68,7 +68,7 @@ class ClientRepository
         return Passport::client()
             ->whereHasMorph(
                 'user',
-                get_class($user),
+                $user->getMorphClass(),
                 function (Builder $query) use ($user) {
                     $query->where($user->getKeyName(), $user->getKey());
                 }
@@ -126,7 +126,7 @@ class ClientRepository
     {
         $client = Passport::client()->forceFill([
             'name' => $name,
-            'user_type' => get_class($user),
+            'user_type' => $user->getMorphClass(),
             'user_id' => $user->getKey(),
             'secret' => ($confidential || $personalAccess) ? Str::random(40) : null,
             'redirect' => $redirect,

@@ -41,7 +41,7 @@ class TokenRepository
         return Passport::token()->where('id', $id)
             ->whereHasMorph(
                 'user',
-                get_class($user),
+                $user->getMorphClass(),
                 function (Builder $query) use ($user) {
                     $query->where($user->getKeyName(), $user->getKey());
                 }
@@ -59,7 +59,7 @@ class TokenRepository
         return Passport::token()
             ->whereHasMorph(
                 'user',
-                get_class($user),
+                $user->getMorphClass(),
                 function (Builder $query) use ($user) {
                     $query->where($user->getKeyName(), $user->getKey());
                 }
@@ -79,7 +79,7 @@ class TokenRepository
         return $client->tokens()
                     ->whereHasMorph(
                         'user',
-                        get_class($user),
+                        $user->getMorphClass(),
                         function (Builder $query) use ($user) {
                             $query->where($user->getKeyName(), $user->getKey());
                         }
@@ -138,7 +138,7 @@ class TokenRepository
         return $client->tokens()
             ->whereHasMorph(
                 'user',
-                get_class($user),
+                $user->getMorphClass(),
                 function (Builder $query) use ($user) {
                     $query->where($user->getKeyName(), $user->getKey());
                 }
