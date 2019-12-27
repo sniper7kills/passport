@@ -14,7 +14,7 @@ class PolymorphicChanges extends Migration
     public function up()
     {
         Schema::table('oauth_auth_codes', function (Blueprint $table) {
-            $table->string('user_type');
+            $table->string('user_type')->nullable();
         });
 
         Schema::table('oauth_access_tokens', function (Blueprint $table) {
