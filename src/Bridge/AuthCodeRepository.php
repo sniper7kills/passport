@@ -25,7 +25,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
         $provider = Auth::guard()->getProvider();
-        //$provider = Auth::createUserProvider(config('auth.guards.api.provider'));
         $user = $provider->retrieveById($authCodeEntity->getUserIdentifier());
         $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
