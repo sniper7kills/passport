@@ -14,15 +14,15 @@ class PolymorphicChanges extends Migration
     public function up()
     {
         Schema::table('oauth_auth_codes', function (Blueprint $table) {
-            $table->string('user_type')->nullable();
+            $table->string('user_type')->nullable()->after('user_id');
         });
 
         Schema::table('oauth_access_tokens', function (Blueprint $table) {
-            $table->string('user_type')->index()->nullable();
+            $table->string('user_type')->index()->nullable()->after('user_id');
         });
 
         Schema::table('oauth_clients', function (Blueprint $table) {
-            $table->string('user_type')->index()->nullable();
+            $table->string('user_type')->index()->nullable()->after('user_id');
         });
     }
 
