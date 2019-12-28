@@ -35,14 +35,26 @@ class UserRepository implements UserRepositoryInterface
     {
         $provider = Auth::guard()->getProvider();
 
-        if (!method_exists($provider, 'findForPassport')) {
-            if (method_exists($provider->getModel(), 'findForPassport')) {
-                $user = (new $provider->getModel())->findForPassport($username);
-            } else {
-                $user = (new $provider->getModel())->where('email', $username)->first();
+        if (method_exists($provider, 'findAndValidateForPassport')) {
+            $user = $provider->findAndValidateForPassport($username,$password);
+            if(! $user) {
+                return;
             }
-        } else{
+            return new User($user->getAuthIdentifier());
+        } else if (method_exists($provider->getModel(), 'findAndValidateForPassport')) {
+            $user = (new $provider->getModel())->findAndValidateForPassport($username, $password);
+            if (! $user) {
+                return;
+            }
+            return new User($user->getAuthIdentifier());
+        }
+
+        if (method_exists($provider, 'findForPassport')) {
             $user = $provider->findForPassport($username);
+        } else if (method_exists($provider->getModel(), 'findForPassport')) {
+            $user = (new $provider->getModel())->findForPassport($username);
+        } else {
+            $user = (new $provider->getModel())->where('email', $username)->first();
         }
 
         if (! $user) {
