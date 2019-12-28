@@ -139,6 +139,10 @@ class TokenGuard
             $psr->getAttribute('oauth_user_id') ?: null
         );
 
+        if (! $user) {
+            return;
+        }
+
         // Next, we will assign a token instance to this user which the developers may use
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
@@ -146,10 +150,6 @@ class TokenGuard
             $psr->getAttribute('oauth_access_token_id')
         );
 
-        // Ensure we received a user; and that user is the same one assigned to the token.
-        if (! $user) {
-            return;
-        }
         $clientId = $psr->getAttribute('oauth_client_id');
 
         // Finally, we will verify if the client that issued this token is still valid and
