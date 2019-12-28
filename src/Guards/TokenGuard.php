@@ -132,6 +132,13 @@ class TokenGuard
             return;
         }
 
+        // If the access token is valid we will retrieve the user according to the user ID
+        // associated with the token. We will use the provider implementation which may
+        // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
+        $user = $this->provider->retrieveById(
+            $psr->getAttribute('oauth_user_id') ?: null
+        );
+
         // Next, we will assign a token instance to this user which the developers may use
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
@@ -139,15 +146,10 @@ class TokenGuard
             $psr->getAttribute('oauth_access_token_id')
         );
 
-        // If the access token is valid we will retrieve the user according to the user ID
-        // associated with the token. We will use the provider implementation which may
-        // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $token->user;
-
+        // Ensure we received a user; and that user is the same one assigned to the token.
         if (! $user) {
             return;
         }
-
         $clientId = $psr->getAttribute('oauth_client_id');
 
         // Finally, we will verify if the client that issued this token is still valid and
@@ -157,7 +159,7 @@ class TokenGuard
             return;
         }
 
-        return $token ? $user->withAccessToken($token) : null;
+        return ($token && $user == $token->user) ? $user->withAccessToken($token) : null;
     }
 
     /**
@@ -205,7 +207,11 @@ class TokenGuard
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
         if ($user = $this->provider->retrieveById($token['sub'])) {
-            return $user->withAccessToken(new TransientToken);
+            // Confirm we receive the same user as assigned to the token
+            if($user === $token->user)
+                return $user->withAccessToken(new TransientToken);
+            else
+                return;
         }
     }
 
