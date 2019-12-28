@@ -35,6 +35,9 @@ class UserRepository implements UserRepositoryInterface
     {
         $provider = Auth::guard()->getProvider();
 
+        if(is_null($provider->getModel()))
+            throw new RuntimeException('Unable to determine authentication model from authentication driver.');
+
         if (method_exists($provider, 'findAndValidateForPassport')) {
             $user = $provider->findAndValidateForPassport($username,$password);
             if(! $user) {
