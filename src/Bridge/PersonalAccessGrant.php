@@ -30,8 +30,6 @@ class PersonalAccessGrant extends AbstractGrant
             $this->getRequestParameter('user_id', $request), $scopes
         );
 
-        //die("PAG-".print_r($accessToken));
-
         // Inject access token into response type
         $responseType->setAccessToken($accessToken);
 
