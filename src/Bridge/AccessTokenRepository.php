@@ -55,16 +55,12 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        //TODO: Figure out best way to handle this
-        //$guard = Auth::guard();
-        //die(print_r($guard->getProvider()->getModel()));
-        //die("ATR-".print_r($accessTokenEntity));
-
+        //TODO: find a better way to do this;
+        // possibly make a pull request to thephpleague/oauth2-server
+        // adding meta-data support and storing the class in the meta-data
         $userIdentifier = json_decode($accessTokenEntity->getUserIdentifier());
-        $provider = Auth::guard()->getProvider();
-        $user = $provider->retrieveById($userIdentifier->authId);
-        if(is_null($user))
-            $user = ($userIdentifier->class)::find($userIdentifier->id);
+        $model = new $userIdentifier->class;
+        $user = $model->where($model->getAuthIdentifierName(),$userIdentifier->authId)->first();
 
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
