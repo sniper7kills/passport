@@ -94,11 +94,12 @@ class PersonalAccessTokenFactory
      */
     protected function createRequest($client, $user, array $scopes)
     {
+        //TODO:Look Closer At This
         return (new ServerRequest)->withParsedBody([
             'grant_type' => 'personal_access',
             'client_id' => $client->id,
             'client_secret' => $client->secret,
-            'user_id' => $user->getAuthIdentifier(),
+            'user_id' => json_encode(['authId'=>$user->getAuthIdentifier(),'id'=>$user->getKey(),'class'=>$user->getMorphClass()]),
             'scope' => implode(' ', $scopes),
         ]);
     }

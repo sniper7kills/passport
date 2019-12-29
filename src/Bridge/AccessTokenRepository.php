@@ -55,8 +55,16 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
+        //TODO: Figure out best way to handle this
+        //$guard = Auth::guard();
+        //die(print_r($guard->getProvider()->getModel()));
+        //die("ATR-".print_r($accessTokenEntity));
+
+        $userIdentifier = json_decode($accessTokenEntity->getUserIdentifier());
         $provider = Auth::guard()->getProvider();
-        $user = $provider->retrieveById($accessTokenEntity->getUserIdentifier());
+        $user = $provider->retrieveById($userIdentifier->authId);
+        if(is_null($user))
+            $user = ($userIdentifier->class)::find($userIdentifier->id);
 
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
