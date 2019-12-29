@@ -132,16 +132,20 @@ class TokenGuard
             return;
         }
 
-        //die(print_r($psr->getAttribute('oauth_user_id')));
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
+
+        //TODO: find a better way to do this;
+        // possibly make a pull request to thephpleague/oauth2-server
+        // adding meta-data support and storing the class in the meta-data
         $psrUserInfo = json_decode($psr->getAttribute('oauth_user_id'));
 
         $user = $this->provider->retrieveById(
             $psrUserInfo->authId ?: null
         );
 
+        // Ensure we retrieved a user; and that model the provider returned matches the class in the token
         if (! $user || $psrUserInfo->class != $this->provider->getModel() ) {
             return;
         }
@@ -162,6 +166,7 @@ class TokenGuard
             return;
         }
 
+        // Ensure we have a token; and that the user retrieved is associated with the token
         return ($token && $user == $token->user) ? $user->withAccessToken($token) : null;
     }
 
