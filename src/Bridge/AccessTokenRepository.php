@@ -63,15 +63,15 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
 
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
-            'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'user_type' => $user->getMorphClass(),
             'user_id' => $user->getKey(),
+            'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
-        ])->save();
+        ]);
 
         $this->events->dispatch(new AccessTokenCreated(
             $accessTokenEntity->getIdentifier(),
