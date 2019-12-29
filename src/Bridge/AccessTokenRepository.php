@@ -4,7 +4,6 @@ namespace Laravel\Passport\Bridge;
 
 use DateTime;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Events\AccessTokenCreated;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
