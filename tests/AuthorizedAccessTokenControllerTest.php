@@ -95,23 +95,15 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $user = new AuthorizedAccessTokenControllerTestFakeUser();
-        $this->tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
+        $this->tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
 
-        $request->setUserResolver(function () use ($user) {
+        $request->setUserResolver(function () {
+            $user = m::mock();
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
             return $user;
         });
 
         $this->assertEquals(404, $this->controller->destroy($request, 3)->status());
-    }
-}
-
-class AuthorizedAccessTokenControllerTestFakeUser extends \Illuminate\Foundation\Auth\User
-{
-    public $id = 1;
-
-    public function getAuthIdentifier()
-    {
-        return $this->id;
     }
 }
