@@ -32,8 +32,8 @@ class HasApiTokensTest extends TestCase
         $container = new Container;
         Container::setInstance($container);
         $container->instance(PersonalAccessTokenFactory::class, $factory = m::mock());
+        $factory->shouldReceive('make')->once()->with(1, 'name', ['scopes']);
         $user = new HasApiTokensTestStub;
-        $factory->shouldReceive('make')->once()->with($user, 'name', ['scopes']);
 
         $user->createToken('name', ['scopes']);
     }
