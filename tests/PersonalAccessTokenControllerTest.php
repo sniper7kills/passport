@@ -116,12 +116,10 @@ class PersonalAccessTokenControllerTest extends TestCase
         $request = Request::create('/', 'GET');
 
         $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
+        $user = new PersonalAccessTokenControllerTestFakeUser();
+        $tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
 
-        $request->setUserResolver(function () {
-            $user = m::mock();
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
+        $request->setUserResolver(function () use ($user) {
             return $user;
         });
 
@@ -129,5 +127,15 @@ class PersonalAccessTokenControllerTest extends TestCase
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(404, $controller->destroy($request, 3)->status());
+    }
+}
+
+class PersonalAccessTokenControllerTestFakeUser extends \Illuminate\Foundation\Auth\User
+{
+    public $id = 1;
+
+    public function getAuthIdentifier()
+    {
+        return $this->id;
     }
 }
